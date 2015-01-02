@@ -7,19 +7,19 @@ function constants = get_constants()
     
     constants.res = [16.5 16.5 23]*2*1.15;
     constants.strat_x = -20:120;
-    constants.point_dir = '/data/home/greenem/stratification/surface_points_trans/';
-    constants.raw_point_dir = '/data/home/greenem/stratification/point_data/';
+    constants.point_dir = '/data/home/greenem/data/stratification/surface_points_trans/';
+    constants.raw_point_dir = '/data/home/greenem/data/stratification/point_data/';
     
-    constants.conn_loc = '/data/home/greenem/stratification/trans_conns.mat';
-    constants.trans_loc = '/data/home/greenem/stratification/T.mat';
+    constants.conn_loc = '/data/home/greenem/data/stratification/trans_conns.mat';
+    constants.trans_loc = '/data/home/greenem/data/stratification/T.mat';
     
     constants.soma_loc_threshold = 20;
-    constants.soma_dir = '/data/home/greenem/stratification/soma_points/';
+    constants.soma_dir = '/data/home/greenem/data/stratification/soma_points/';
     constants.dist_bin = 10;
     constants.angle_step = 2*pi/100;
-    constants.strat_dir = '/data/home/greenem/stratification/cell_strats/';
+    constants.strat_dir = '/data/home/greenem/data/stratification/cell_strats/';
     constants.axial_x_min = -20;
-    constants.celldata_dir = '/data/home/greenem/stratification/cell_data/';
+    constants.celldata_dir = '/data/home/greenem/data/stratification/cell_data/';
     
     constants.sac_bins = 10:20:20*8.5;
     constants.j_bins = 15:30:30*6;
@@ -29,7 +29,7 @@ function constants = get_constants()
     constants.min_xy = [0.2849    2.3112] * 10^3;
     constants.max_xy = [3.3954    2.9105] * 10^5;
 
-    constants.hull_dir = '/data/home/greenem/stratification/hull_intersects/';
+    constants.hull_dir = '/data/home/greenem/data/stratification/hull_intersects/';
     
     constants.cell_dsmp_fact = [round(abs(constants.f(1000)-constants.f(0))) 1000 1000 ] .* [1 1 1];
     
