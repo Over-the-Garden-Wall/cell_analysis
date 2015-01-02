@@ -1,0 +1,33 @@
+function contact_list = analyze_dendrite(cell_num, path_num, allowed_hull, dend_max_radius)
+
+    cell_dat = cell_data(cell_num);
+    
+    fn = ['./sac_dendrite_paths/path_' num2str(cell_num) '.mat'];
+        
+    load(fn);
+    
+    p = paths{path_num};
+    
+    
+    dist = sqrt(sum((p(1:end-1,:)-p(2:end,:)).^2,2));
+    total_dist = [0; cumsum(dist)];
+    
+    is_in_hull = inpolygon(p(:,2),p(:,3), allowed_hull(:,1), allowed_hull(:,2));
+    p = p(is_in_hull,:);
+    total_dist = total_dist(is_in_hull);
+    
+    contact_points = double(cell_dat.contacts);
+    
+    near_contacts = find_nearby_points(p, contact_points(3:5,:)',dend_max_radius);
+    
+    a = 1;
+    
+    contact_list = [];
+    for n = 1:length(near_contacts)
+        if ~isempty(near_contacts{n});
+            contact_list = [contact_list; contact_points(1:2,near_contacts{n})', ones(length(near_contacts{n}),1)*total_dist(n)];
+        end
+    end
+    
+end
+    

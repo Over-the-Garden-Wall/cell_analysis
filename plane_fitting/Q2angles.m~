@@ -1,0 +1,26 @@
+function [t f s] = Q2angles(Q)
+     
+%     Q = [ct*cs, sf*st*cs-cf*ss, sf*ss+cf*st*cs; ...
+%         ct*ss, cf*cs + sf*st*ss, cf*st*ss-sf*cs; ...
+%         -st, sf*ct, cf*ct];
+
+
+    t = asin(-Q(3,1));
+    f = asin(Q(3,2)/cos(t));
+    s = acos(Q(1,1)/cos(t));
+    
+    %resolve sign differences
+    
+    %assume t is correct
+    if Q(3,3) ~= cos(t)*cos(f)
+        f = pi - f;
+    end
+    if Q(1,2) ~= cos(t)*sin(s);
+        s = -s;
+    end    
+    %will give correct Q...
+    
+    if Q
+    
+    
+end

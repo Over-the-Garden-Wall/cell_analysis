@@ -1,0 +1,9 @@
+function [density mid_point is_valid] = get_density_by_distance(cell_num, varargin)
+    
+    density = get_density_all(cell_num, varargin{:});
+    
+    
+    
+    
+
+end

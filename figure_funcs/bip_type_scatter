@@ -1,0 +1,23 @@
+types = {'t1','t2','t3a','t3b','t4'};
+C = get_constants;
+
+cmap = colormap('Lines');
+
+for k = 1:length(types);
+    cell_nums = C.type.(types{k});
+    
+    figure; hold all;
+    
+    for c = cell_nums;
+        cell_dat = cell_data(c);
+        p = cell_dat.get_surface;
+        p = p(1:1000:end,2:3);
+        meanp = mean(p);
+        h = scatter(p(:,1),p(:,2));
+        ecol = get(h, 'MarkerEdgeColor');
+        set(h, 'MarkerFaceColor', ecol);
+        
+        text(meanp(1),meanp(2), num2str(c-60000));
+    end
+end
+        

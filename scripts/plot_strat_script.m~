@@ -1,0 +1,39 @@
+function plot_strat_script(cells, target_cell)
+
+    if ~exist('target_cell','var') || isempty(target_cell)
+        target_cell = 10010;
+    end
+
+    C = get_constants;
+
+    if ~iscell(cells)
+        temp = cells;
+        clear cells;
+        cells{1} = temp;
+    end
+    
+    cell_nums = [];
+    cell_type = [];
+    for k = 1:length(cells)
+        if isstr(cells{k})
+            fns = fieldnames(C.type);
+            fn = 0;
+            for f = 1:length(fns);
+                if strcmp(fns{f},cells{k})
+                    fn = k;
+                end
+            end
+            cell_nums = [cell_nums C.type.(fns{k})];
+            cell_type = [cell_type k*ones(1,length(C.type.(fns{k})))];
+        else
+            cell_nums = [cell_nums cells{k}];
+            cell_type = [cell_type k*ones(1,length(C.type.(fns{k})))];            
+        end
+    end
+
+    conn_data = load(C.conn_loc);
+    fns = fieldnames(conn_data);
+    
+    
+    plot_strat_w_contacts(cells, target_cell, conn_data.(fns{1}));
+end

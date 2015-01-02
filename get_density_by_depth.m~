@@ -1,0 +1,35 @@
+function [density is_valid] = get_density_by_depth(cell_num, force_recalc)
+
+    if ~exist('force_recalc','var') || isempty(force_recalc)
+        force_recalc = false;
+    end
+
+    C = get_constants;
+    
+    strat_fn = [C.strat_dir '/cell_' num2str(cell_num(n)) '_strat.mat'];
+    if exist(strat_fn,'file') && ~force_recalc
+        load(strat_fn)
+    
+    
+    x = C.strat_x;
+
+    fn = [C.point_dir '/cell_' num2str(cell_nums(n)) '_surface.mat'];
+    if exist(fn,'file')
+        data = load(fn);
+        fields = fieldnames(data);
+        p = f(data.(fields{1})(:,1));
+    else
+        warning(['data not found for ' fn]);
+        p = [];
+        is_valid(n) = false;
+    end
+        
+        if is_valid(n)
+            y_data(:,n) = hist(p,x);
+            y_data(:,n) = y_data(:,n)/sum(y_data(:,n));
+
+            if is_peak
+                [~, max_ind] = max(y_data(:,n));
+                col_pick(n) = ceil(max_ind/num_points*size(c,1));
+            end                            
+        end

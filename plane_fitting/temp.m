@@ -1,0 +1,91 @@
+data = get_all_skeles;
+
+density = .04;
+
+figure
+
+% Ps = zeros(24,4);
+% is_on = false(24,1);
+% num_coords = zeros(1,2);
+% 
+% for n = 1:length(data);
+%     Ps(n,:) = data{n}.P(1:4);
+%     is_on(n) = data{n}.on_cell;
+%     
+%     num_coords(is_on(n)+1) = num_coords(is_on(n)+1)+size(data{n}.coords,1);
+% end
+% 
+% off_coords = zeros(num_coords(1),3);
+% on_coords = zeros(num_coords(2),3);
+% 
+% coord_start = zeros(1,2);
+% for n = 1:length(data)
+%     data_length = size(data{n}.coords,1);
+%         
+%     if is_on(n)
+%         on_coords(coord_start(1)+1:coord_start(1)+data_length,:) = data{n}.coords;
+%         coord_start(1) = data_length+coord_start(1);
+%     else
+%         off_coords(coord_start(2)+1:coord_start(2)+data_length,:) = data{n}.coords;
+%         coord_start(2) = data_length+coord_start(2);
+% 
+%     end
+% end
+% 
+% [on_Q on_P] = find_planar_rotation_iterative(on_coords, .0001); 
+% [off_Q off_P] = find_planar_rotation_iterative(off_coords, .0001);    
+% 
+% close all
+% 
+% % for n = 1:length(data);
+% %     if is_on(n) %data{n}.on_cell
+% %         my_col = [1/3 0 0] * (1+2*rand);        
+% %         k = data{n}.coords*on_Q'; 
+% %         subplot(1,2,1);
+% %     else
+% %         my_col = [0 0 1/3] * (1+2*rand);
+% %         k = data{n}.coords*off_Q'; 
+% %         subplot(1,2,2);
+% %     end
+% %         
+% %     r = rand(size(k,1),1) < density;
+% %     scatter(k(r,1),k(r,2), '.', 'MarkerEdgeColor', my_col); hold on; 
+% % end
+figure; hold on
+for n = 1:length(data)
+    my_col = [1/3 0 0] + [2/3 2/3 0].*rand(1,3);        
+    k = data{n}.coords*Q';
+    r = rand(size(k,1),1) < density;
+% %     scatter(k(r,1),k(r,2), '.', 'MarkerEdgeColor', my_col); hold on; 
+%     
+    k = k(:,1);
+    [plot_data xout] = hist(k,500);
+%     
+    plot(xout, plot_data/sum(plot_data),'Color', my_col);
+%     
+end
+% % plot(-ones(1,4)*on_P(4), [0 1 2 3.3]*10^5, 'k');
+% % hold off;
+% % figure;
+% for n = find(~is_on')
+%     my_col = [0 0 1/3] + [0 2/3 2/3].*rand(1,3);        
+%     k = data{n}.coords*off_Q'; 
+% %     r = rand(size(k,1),1) < density;
+% %     scatter(k(r,1),k(r,2), '.', 'MarkerEdgeColor', my_col); hold on; 
+% 
+%     k = k(:,1);
+%     [plot_data xout] = hist(k,500);
+%     
+%     plot(xout, plot_data/sum(plot_data),'Color', my_col);
+% end
+% 
+% 
+
+
+
+
+% subplot(1,2,1);
+
+
+% subplot(1,2,2);
+% plot(-ones(1,4)*off_P(4), [0 1 2 3.3]*10^5, 'k');

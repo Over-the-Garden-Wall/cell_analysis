@@ -1,0 +1,94 @@
+function plot_with_ste_area(plot_x, plot_y, ribbon_size, fig_handle)
+
+    if ~iscell(plot_x)
+        temp = plot_x;
+        clear plot_data
+        plot_x{1} = temp;
+    end
+    if ~iscell(plot_y)
+        temp = plot_y;
+        clear plot_y
+        plot_y{1} = temp;
+    end
+    if ~iscell(ribbon_size)
+        temp = ribbon_size;
+        clear ribbon_size
+        ribbon_size{1} = temp;
+    end
+
+    if ~exist('fig_handle', 'var') || isempty(fig_handle)
+        fig_handle = gcf;
+    end
+    
+    axes_h = get(fig_handle, 'CurrentAxes');
+    hold(axes_h,'all');
+    
+    num_areas = length(plot_data);
+    
+    my_colors = colormap('Lines');
+%     my_colors = my_colors(round(size(my_colors,1)/num_areas:size(my_colors,1)/num_areas:end),:);
+    my_colors = my_colors(1:num_areas,:);
+    
+%     area_handles = cell(num_areas,1);
+%     area_handles = zeros(num_areas,2);
+
+%     x = -9:80;
+
+    for n = 1:num_areas        
+        if size(plot_x{n},1) ~= 1;
+            plot_x{n} = plot_x{n}';
+        end
+        if size(plot_y{n},1) ~= 1;
+            plot_y{n} = plot_y{n}';
+        end
+        if size(ribbon_size{n},1) ~= 1;
+            ribbon_size{n} = ribbon_size{n}';
+        end                
+        
+        
+        to_close{n} = figure;
+        area_handles = area(axes_h, plot_x{1}, [plot_y{n}-ribbon_size{n}/2; ribbon_size{n}]', 'lineStyle', 'none');
+        set(area_handles(1), 'Visible', false);
+        line_h = plot(axes_h, plot_x{n}, plot_y{n});
+        line_col = get(line_h, 'Color')
+        set(area_handles(2), 'FaceColor', line_col*.5 + [1 1 1]*.5);
+    
+%         set(get(harea(1),'Children'),'FaceColor',[1 1 1])
+    end
+    
+%     close all
+    
+%     figure('position', [1 1 1200 800]);
+%     axes;
+%     hold on;       
+    
+    for n = 1:num_areas        
+        new_h = copyobj(area_handles{n}(2),axes_h);  
+        
+    end
+%          copyobj(area_handles(:,2),gca);        
+    
+    for n = 1:num_areas    
+        
+    end
+    
+    
+    figure('position', [1 1 1200 800]);
+    axes;
+    hold on;
+    
+    for n = num_areas:-1:1
+        new_h = copyobj(area_handles{n}(2),gca);  
+        
+    end
+%          copyobj(area_handles(:,2),gca);        
+    
+    for n = num_areas:-1:1
+        close(to_close{n});
+        plot(x, mean_data{n}, 'Color', my_colors(n,:))
+    end
+    
+    
+    
+%     a = 1;
+end

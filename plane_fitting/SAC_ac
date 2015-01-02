@@ -1,0 +1,35 @@
+
+ac023	sac020	0/close/distal	done	contact_o
+ac024	sac014	340/mid/distal	done	contact_o
+ac033	sac018	0/close/distal	done	contact_o
+ac035	sac022	30/far/distal	tracing
+
+ac031	sac008	90/far/distal	done	contact_o
+ac032	sac007	90/far/distal	done	contact_o
+ac034	sac019	90/mid/distal	tracing
+
+ac030	sac009	130/far/distal	done	contact_o
+
+ac025	sac001	290/far/distal	done	contact_o
+ac026	sac002	260/far/distal	done	contact_o
+
+
+ac014	not_in_the_list	-/mid/proximal	done
+ac016	not_in_the_list	-/mid/proximal	done
+
+
+Xac027	sac003	110/farfar/no_overlap	done	:	blood vessel, in FT
+X	sac021	260/farfar/no_overlap	not started
+X	sac026	160/farfar/little_overlap	not started
+
+Xac028	sac004	on	pending
+Xac029	sac005	on	pending
+X	sac006	on
+X	sac010	on
+X	sac011	on
+X	sac012	on
+X	sac015	on
+X	sac016	on
+X	sac017	on
+X	sac027	on
+X	sac033	on

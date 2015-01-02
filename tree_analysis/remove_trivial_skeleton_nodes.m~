@@ -1,0 +1,42 @@
+function trimmed_skele = remove_trivial_skeleton_nodes(skeleton, critical_node_list, soma_node)
+
+
+    G = skeleton2graph(skeleton);
+    
+    trimmed_skele.edges = [];
+    
+    trimmed_skele.nodes = zeros(length(critical_node_list),3);
+    
+    distances = graphshortestpath(G,soma_node);
+    is_valid = ~isinftrue(size(distances));
+    
+    while any(is_valid)
+    
+    %dumb method
+    for m = 1:length(critical_node_list);        
+        [~, gpath] = graphshortestpath(G,soma_node, critical_node_list(m));
+            if ~isempty(gpath)
+                gpath([1 end]) = [];
+
+                is_ok = true;
+                for k = gpath
+                    if any(k==critical_node_list)
+                        is_ok = false;
+                        break
+                    end
+                end
+
+                if is_ok
+                    trimmed_skele.edges = [trimmed_skele.edges; m n];
+                end
+            end
+        end
+        trimmed_skele.nodes(m,:) = skeleton.nodes(critical_node_list(m),:);        
+        
+    end
+end
+    
+    
+        
+
+    

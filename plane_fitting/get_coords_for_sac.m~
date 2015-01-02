@@ -1,0 +1,40 @@
+function [coords point_id] = get_coords_for_sac(sac_name)
+
+
+    dir_path = ['./' sac_name '/'];
+    
+    fns = dir(dir_path);
+    
+    for n = 1:length(fns)
+        if length(fns(n).name) > 5 && strcmp(fns(n).name(1:5),'e2198');
+            fn = fns(n).name;
+            break
+        end
+    end
+    
+    fid = fopen([dir_path fn], 'r');
+    F = fread(fid, '*char' )';
+    fclose(fid);
+    node_loc = strfind(F, 'node id="');
+
+    coords = zeros(length(node_loc),3);   
+    point_id = zeros(length(node_loc),1);   
+    
+    for n = 1:length(node_loc)
+        
+        relevant_string = F(node_loc(n):node_loc(n)+80);
+        x_loc = find(relevant_string=='x',1,'first');
+        y_loc = find(relevant_string=='y',1,'first');
+        z_loc = find(relevant_string=='z',1,'first');        
+        V_loc = find(relevant_string=='V',1,'first');
+        
+        coords(n,1) = str2double(relevant_string(x_loc+3:y_loc-3));
+        coords(n,2) = str2double(relevant_string(y_loc+3:z_loc-3));
+        coords(n,3) = str2double(relevant_string(z_loc+3:V_loc-5));
+        
+
+        quote_loc = find(relevant_string=='"');
+        
+    end
+    
+end

@@ -1,0 +1,19 @@
+C = get_constants;
+types = {'t1', 't2', 't3a', 't3b', 't4'};
+type_num = [1, 2, 31, 32, 4];
+
+
+all_M = [];
+for k = 1:length(types)
+    M = zeros(length(C.type.(types{k})),6);
+    for ck = 1:length(C.type.(types{k}))
+        c = C.type.(types{k})(ck);
+        cell_dat = cell_data(c);        
+        
+        M(ck,:) = [c, type_num(k), cell_dat.quartile_depth(1:3) cell_dat.hull_area cell_dat.V cell_dat.S];
+    end 
+    
+    all_M = [all_M; M];
+end
+    
+dlmwrite('./cell_quartiles.txt',all_M);

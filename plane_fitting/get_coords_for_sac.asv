@@ -1,0 +1,29 @@
+function coords = get_coords_for_sac(sac_name)
+
+    increment = 10000;
+
+    dir_path = ['./' sac_name '/'];
+    
+    fns = dir(dir_path);
+    
+    for n = 1:length(fns)
+        if length(fns(n).name) > 5 && strcmp(fns(n).name(1:5),'e2198');
+            fn = fns(n).name;
+            break
+        end
+    end
+    
+    fid = fopen([dir_path fn], 'r');
+    F = char(fread(fid, 'uchar' ))';
+    
+    k = 1;
+    coords = zeros(3,increment);
+    
+    
+    rad_loc = strfind(F, 'radius')
+    
+    for n = 1:length(rad_loc)
+        
+        
+    
+end

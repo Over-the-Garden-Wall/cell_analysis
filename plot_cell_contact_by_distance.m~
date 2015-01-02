@@ -1,0 +1,54 @@
+function fig_handle = plot_cell_contact_by_distance(contacting_cells, target_cells, use_axis, use_arbor, normalize_by_SA, c, fig_handle)
+
+    if ~exist('use_axis','var') || isempty(use_axis)
+        use_axis = false;
+    end
+    if ~exist('use_arbor','var') || isempty(use_arbor)
+        use_arbor = false;
+    end
+    if ~exist('normalize_by_SA','var') || isempty(normalize_by_SA)
+        normalize_by_SA = false;
+    end
+    
+    if use_axis
+        dist_mode = 'axis';
+    else
+        dist_mode = 'point';
+    end
+    
+    if use_arbor
+        loc_mode = 'arbor';
+    else
+        loc_mode = 'contact';
+    end
+    
+    C = get_constants;
+    
+    conn_info = load(C.conn_loc);
+    fns = fieldnames(conn_info);    
+    
+    num_targets = length(target_cells);
+    num_contacts = length(contacting_cells);
+    
+    dist = zeros(num_contacts, num_targets);
+    cont_area = zeros(num_contacts, num_targets);
+    
+    for n = 1:length(target_cells)    
+        [dist(:,n), cont_area(:,n)] = get_mean_contact_by_distance(target_cells(n), contacting_cells, conn_info.(fns{1}), dist_mode, loc_mode);
+    end
+
+    if normalize_by_SA
+        SAs = get_size_stats(contacting_cells);
+        for n = 1:length(contacting_cells)
+            cont_area(:,n) = cont_area(:,n)/SAs(n);
+        end        
+    end
+    
+    if ~exist('fig_handle','var') || ~isempty(fig_handle) 
+    fig_handle = figure; hold on
+    c = colormap('Lines');
+    
+    for n = 1:length(target_cells);
+        scatter(dist, cont_area(:,n), 'o', 'MarkerFaceColor', c(n,:), 'MarkerEdgeColor', c(n,:));
+    end
+end

@@ -1,0 +1,69 @@
+function check_synapse_area_by_angle_script
+
+    C = get_constants;
+    
+
+    j_dat = cell_data(10010);
+    
+    
+    
+    
+    types = {'forward_sac','backward_sac'};
+    
+    
+    for t = 1:length(types)
+    
+        figure
+        cell_nums = C.type.(types{t});    
+
+
+
+        for n = 1:length(cell_nums)
+
+
+            if j_dat.contact_map.isKey(cell_nums(n));
+                cont_id = j_dat.contact_map(cell_nums(n));
+
+                contacts(n) = j_dat.contact_area(cont_id);
+            end
+
+            cell_dat = cell_data(cell_nums(n));
+            locations(n,:) = cell_dat.get_midpoint(false);
+
+        end
+
+
+%         for n = 1:length(cell_nums)
+%             
+%             
+%         end
+
+        for n = 1:length(cell_nums);
+
+            sac_dat = cell_data(cell_nums(n));
+
+            sac_loc(n,:) = sac_dat.get_midpoint(true);
+
+        end
+
+        for n = 1:length(cell_nums)
+
+            sac_angle(n) = atan2(sac_loc(n,3)-locations(n,3), sac_loc(n,2)-locations(n,2));
+
+        end
+
+        is_NG = contacts==0;
+        contacts(is_NG) = [];
+        sac_angle(is_NG) = [];
+%         dist(is_NG) = [];
+
+        compass(contacts.*cos(sac_angle), contacts.*sin(sac_angle));
+
+        
+        
+    end
+    
+    
+    
+end
+    

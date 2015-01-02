@@ -1,0 +1,36 @@
+** skeleton.[seedid].[serial].nml
+	KNOSSOS skeleton file
+
+** skeleton.[seedid].[serial].coord
+	skeleton point locations (sorted by the "node id")
+	$ ./bin/getCoordFromSkeleton.sh skeleton.[seedid].[serial].nml > skeleton.[seedid].[serial].coord
+
+** skeleton.[seedid].[serial].[omni_vol_id].segid
+	from the coordinates of "skeleton.[seedid].[serial].coord", segments in [omni_vol_id]
+	MATLAB >> segments=findSegmentsListFromSkeletonCoordinate(ws,'skeleton.seed0009.034.coord',[8 101 31]);
+
+** skeleton.[seedid].[serial].[omni_vol_id].child
+	copy and paste "skeleton.[seedid].[serial].[omni_vol_id].segid" to omni,
+	merge them, and then export list children of them 
+	(to cope with the "VxlErr_OneSeg" function format)
+
+
+** tracing.[seedid].[omni_vol_id].[user.serial].child
+	
+
+** tracing.seed0009.bs.jk.001.child
+	entry point segID: 796531, 449879
+	lower threshold 0.93
+
+** tracing.seed0009.bu.jk.001.child
+	entry point segID: 706500, 341639
+	lower threshold 0.80, split out two mergers
+
+** tracing.seed0009.-b.jk.001.child
+	entry point segID: 
+		786066 (0.8? / 2), 16273 (0.83 / 0), 74202 (0.88 / 1), 404219 (0.83 / 0), 
+		96785 (0.92 / 1), 535472 (0.85 / 1), 129926 (0.88 / 1), 154056 (0.93 / 1)
+	result in: 
+	  merger (2604, 14492, 6030) 
+	  split (2566, 13711, 6241)
+	

@@ -1,0 +1,125 @@
+function [fig_handles, colors, mean_strat, y_data, is_valid] = plot_stratification(cell_nums, color_scheme, cell_names)
+    %cell_data is either a cell vector containing point lists, or an array of cell ids 
+    %color_scheme is either a colormap or 'peak' or an array of positive
+    %integers
+    %cell_names is used to title the individual plots and legend
+            
+    C = get_constants;
+    
+    x = C.strat_x;
+
+    num_cells = length(cell_nums);
+    num_points = length(x);
+    
+    y_data = zeros(num_points,num_cells);
+    
+    f = C.f;
+    
+    is_valid = true(num_cells,1);
+        
+    
+    fig_handles(1) = figure; 
+    
+    is_peak = false;
+    col_pick = 1:num_cells;
+    if ~exist('color_scheme','var') || isempty(color_scheme)
+        c = colormap('Lines');
+    elseif isnumeric(color_scheme)
+        c = colormap('Lines');
+        col_pick = color_scheme;
+    elseif strcmp(color_scheme,'peak')
+        is_peak = true;
+        c = colormap('Jet');        
+    else
+        c = colormap(color_scheme);
+    end
+    
+    
+    if ~exist('cell_names','var') || isempty(cell_names)
+        cell_names = cell(num_cells,1);
+        if ~iscell(cell_nums)            
+            for k = 1:num_cells
+                cell_names{k} = num2str(cell_nums(k));
+            end
+        else
+            for k = 1:num_cells
+                cell_names{k} = ['cell ' num2str(k)];
+            end
+        end
+    end
+    
+    for n = 1:num_cells
+        cell_dat = cell_data(cell_nums(n));
+        if isempty(cell_dat)
+            is_valid(n) = false;
+        else
+            y_data(1:length(cell_dat.stratification),n) = cell_dat.stratification;
+        end
+        
+%         [y_data(:,n) is_valid(n)] = get_density_by_depth(cell_nums(n));
+        y_data(:,n) = y_data(:,n)/sum(y_data(:,n));
+        
+        if is_peak
+            [~, max_ind] = max(y_data(:,n));
+            col_pick(n) = ceil(max_ind/num_points*size(c,1));
+        end                            
+
+    end
+    
+    y_data = y_data(:,is_valid);
+    col_pick = col_pick(is_valid);
+    cell_names = cell_names(is_valid);
+    
+    num_cells = length(cell_names);
+    
+    y_bounds = [min(y_data(:)), max(y_data(:))];
+    
+    if isnumeric(color_scheme)
+        color_scheme = color_scheme(is_valid);
+        uni_ids = unique(color_scheme);
+        mean_strat = zeros(num_points,length(uni_ids));
+        for k = 1:length(uni_ids)
+            mean_strat(:,k) = mean(y_data(:,uni_ids(k)==color_scheme),2);
+        end
+    else        
+        mean_strat = mean(y_data,2);
+    end
+    
+    
+    set(gca,'ColorOrder',c(unique(col_pick),:));
+    
+    plot(x,mean_strat);
+    title('Mean Stratification')
+    
+    colors = c(col_pick,:);
+    
+    
+    fig_handles(2) = figure;
+    gca;
+    set(gca,'ColorOrder',colors);
+    hold on
+    
+    for n = 1:length(num_cells)        
+        
+        plot(x', y_data);
+    end
+    legend(cell_names);
+    title('Individual Stratification')
+    
+    
+    fig_handles(3) = figure;     
+
+    p = ceil(sqrt(num_cells));
+    q = ceil(num_cells/p);
+    
+    for n = 1:num_cells
+        subplot(p,q,n);        
+        hold on;
+        
+        plot(x, y_data(:,n), 'Color', colors(n,:));
+        axis([x(1) x(end) y_bounds(1) y_bounds(2)])
+        
+        title(cell_names{n})
+    end    
+    
+end

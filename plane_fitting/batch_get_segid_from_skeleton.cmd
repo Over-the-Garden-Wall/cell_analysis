@@ -1,0 +1,16 @@
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','bh','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','bj','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','bl','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','bm','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','br','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','bt','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','bv','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','bx','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','ce','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','b','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','d','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','f','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','ci','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','ck','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','h','skeleton.seed1020.coord');
+findSegmentsListFromSkeletonCoordinate('/data/omniData/e2198','j','skeleton.seed1020.coord');

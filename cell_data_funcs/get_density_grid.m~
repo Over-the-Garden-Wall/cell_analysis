@@ -1,0 +1,67 @@
+function density = get_density_grid(cell_num, varargin)
+    %compute density of cell by depth, angle, and distance.
+    %If use_soma == true, uses the soma as the reference center. Otherwise
+    %uses arbor mean
+    
+    p = inputParser;    
+    p.addRequired('cell_num', @isnumeric);
+    p.addOptional('force_recalc', false, @islogical);
+    
+    p.parse(cell_num, varargin{:});    
+    s = p.Results;
+    
+   
+    C = get_constants;
+    
+    out_fn = [C.strat_dir '/cell_' num2str(s.cell_num) '_dsmp.mat'];
+    
+    if exist(out_fn,'file') && ~s.force_recalc
+        load(out_fn)
+        return
+    end
+    
+        
+    
+    fn = [C.point_dir '/cell_' num2str(s.cell_num) '_surface.mat'];
+    load(fn);
+    
+    num_points = size(surface_points,1);
+    
+    
+    depth = C.f(surface_points(:,1));
+    depth = round(depth) - C.strat_x(1) + 1;
+    
+    is_bad = (depth > C.strat_x(end) - C.strat_x(1) + 1) | depth <= 0;
+    depth = depth(~is_bad);
+    surface_points = surface_points(~is_bad,:);
+    
+    x = ceil(surface_points(:,2)/C.cell_dsmp_fact(1));
+    y = ceil(surface_points(:,3)/C.cell_dsmp_fact(2));
+    
+    max_depth = length(C.strat_x);
+    
+    x = x*max_depth + depth;
+    
+    
+    
+    dist = ceil(dist/1000);
+    angle = ceil((angle+pi)/C.angle_step);
+    
+    density = zeros(max(depth), max(dist), max(angle));
+    
+    
+    is_bad = (depth > C.strat_x(end) - C.strat_x(1) + 1) | depth <= 0;
+    
+    depth(is_bad) = [];
+    dist(is_bad) =  [];
+    angle(is_bad) = [];
+    
+    num_points = length(depth);
+    
+    for k = 1:num_points
+        density(depth(k), dist(k), angle(k)) = density(depth(k), dist(k), angle(k))+1;
+    end
+        
+    save(out_fn, 'density');
+end
+    

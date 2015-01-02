@@ -1,0 +1,14 @@
+function P = fit_plane(coords)
+
+    coords(4,:) = 1;
+    
+    P = (-coords(1,:))/coords(2:4,:);
+    
+    P = [1 P];
+    
+    %sum(pd.*P(1:3)) = 0
+    
+    proj_direction = P(1:3);
+    
+
+end

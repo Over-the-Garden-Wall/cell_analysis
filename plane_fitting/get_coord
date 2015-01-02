@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+users=(alex rachel lyndsey mike marissa)
+
+for file in sac*/*.nml
+do
+	dir=$(echo $file | cut -f1 -d\/ );
+	index=$(echo $dir | cut -f2 -dc);
+	dest=${dir}/skeleton.seed1${index}.coord
+
+	echo $file $dest
+	../bin/getCoordFromSkeleton.sh $file > $dest
+done
