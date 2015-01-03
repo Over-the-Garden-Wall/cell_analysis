@@ -61,7 +61,7 @@ function ps = apply_transform(T,ps)
         end
     elseif strcmp(T.transform, 'orthostretch');
         num_total_points = size(ps,1);
-        ps2 = ps;
+%         ps2 = ps;
         for n = 1:ceil(num_total_points/BATCH_SIZE);
             
             tps = ps(((n-1)*BATCH_SIZE + 1):min(n*BATCH_SIZE, num_total_points),:);
@@ -87,29 +87,5 @@ function ps = apply_transform(T,ps)
             ps(((n-1)*BATCH_SIZE + 1):min(n*BATCH_SIZE, num_total_points),1) = ...
                 (tps(:,1) - t)./s * T.mean_band_distance;
         end
-        
-%         for n = 1:size(ps,1)
-%             p = ps(n,:);
-%             dist = sqrt((p(2)-T.nodes(:,1)).^2 + ...
-%             (p(3)-T.nodes(:,2)).^2);
-% 
-%             valid_inds = dist<= T.reach;
-%         %     valid_inds = (dist==min(dist));
-%             if ~any(valid_inds)
-%                 [~, d_ind] = min(dist);                
-%                 translatn = T.off_chat(d_ind,:);
-%                 stretch = T.on_chat(d_ind,:)-T.off_chat(d_ind,:);                
-%             else                
-%                 weight = T.reach - dist(valid_inds);
-%                 weight = weight/sum(weight);                
-% 
-%                 translatn = sum(T.off_chat(valid_inds).*weight);
-%                 stretch = sum((T.off_chat(valid_inds)-T.on_chat(valid_inds)).*weight);   
-%             end
-% 
-%             p(1) = (p(1) - translatn)/stretch * T.mean_band_distance;
-%             ps(n,:) = p;          
-%         end
-    
     end
 end
