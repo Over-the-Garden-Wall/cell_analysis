@@ -7,7 +7,7 @@ function setup_path
     addpath([root_path '/plane_fitting/']);
     addpath([root_path '/cell_data_funcs/']);
 
-    addpath([root_path './tree_analysis/']);
+    addpath([root_path '/tree_analysis/']);
 %     
 %     addpath('~greenem/stratification/matlab_bgl/');
 %     addpath('~greenem/stratification/DSDP5.8_64/matlab/');
