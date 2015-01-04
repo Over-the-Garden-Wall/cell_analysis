@@ -12,6 +12,7 @@ function constants = get_constants()
     constants.surface_point_dir = '/data/home/greenem/data/stratification/surface_points/';
     
     
+    constants.raw_conn_loc = '/data/home/greenem/data/stratification/conns.mat';
     constants.conn_loc = '/data/home/greenem/data/stratification/trans_conns.mat';
     constants.trans_loc = '/data/home/greenem/data/stratification/T.mat';
     
