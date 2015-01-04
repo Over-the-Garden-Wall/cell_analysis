@@ -9,8 +9,6 @@ function constants = get_constants()
     constants.strat_x = -20:120;
     constants.point_dir = '/data/home/greenem/data/stratification/surface_points_trans/';
     constants.raw_point_dir = '/data/home/greenem/data/stratification/point_data/';
-    constants.surface_point_dir = '/data/home/greenem/data/stratification/surface_points/';
-    
     
     constants.conn_loc = '/data/home/greenem/data/stratification/trans_conns.mat';
     constants.trans_loc = '/data/home/greenem/data/stratification/T.mat';
@@ -29,7 +27,7 @@ function constants = get_constants()
 %     constants.sac_bins = 5:10:135;
     
     constants.min_xy = [.05 0] * 10^5;
-    constants.max_xy = [3.45 3.92] * 10^5;
+    constants.max_xy = [    2.9105] * 10^5;
 
     constants.hull_dir = '/data/home/greenem/data/stratification/hull_intersects/';
     

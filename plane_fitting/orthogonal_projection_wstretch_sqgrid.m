@@ -1,7 +1,9 @@
-function T = orthogonal_projection(num_rings)
+function T = orthogonal_projection(grid_size)
 
     T.transform = 'orthostretch';
+        
     
+
     
     C = get_constants;
     %get global linear transform
@@ -10,8 +12,14 @@ function T = orthogonal_projection(num_rings)
     res = C.res;
     T.res = res;
     
-    density = .001;
+    density = .002;
 
+    [grid_X grid_Y] = meshgrid(...
+        C.min_xy(2):(C.max_xy(2) - C.min_xy(2))/(grid_size(2)-1):C.max_xy(2), ...
+        C.min_xy(1):(C.max_xy(1) - C.min_xy(1))/(grid_size(1)-1):C.max_xy(1));
+        
+    
+    
     off_sacs = C.type.sure_off_sac;
     on_sacs = C.type.on_sac;
     
@@ -51,12 +59,12 @@ function T = orthogonal_projection(num_rings)
 %     p(:,3) = p(:,3)-T.center(3);
 %         
     dist = sqrt((p(:,2)-T.center(1)).^2 + (p(:,3)-T.center(2)).^2);
-    odist = sqrt((op(:,2)-T.center(1)).^2 + (op(:,3)-T.center(2)).^2);
+%     odist = sqrt((op(:,2)-T.center(1)).^2 + (op(:,3)-T.center(2)).^2);
             
-    T.radius = max(dist)/(num_rings+sqrt(3)/2)*1.2; %bit of a hack here
-    T.reach = T.radius*sqrt(3)/2;
+%     T.radius = max(dist)/(num_rings+sqrt(3)/2)*1.2; %bit of a hack here
+    T.reach = sqrt((grid_X(1,2)-grid_X(1,1))^2 + (grid_Y(2,1)-grid_Y(1,1))^2);
     
-    T.num_nodes = 1+sum(6*(1:num_rings));
+    T.num_nodes = numel(grid_X);
     
     T.nodes = zeros(T.num_nodes,2);
     T.num_points = zeros(T.num_nodes,1);
@@ -67,30 +75,22 @@ function T = orthogonal_projection(num_rings)
 %     is_valid = true(T.num_nodes,1);
     
     
-    k = 0;
    
-    for r = 0:num_rings
-        if r==0
-            N = 1;
-        else
-            N = 6*r;
-        end
-        
-        for n = 1:N
-            k = k+1;
+    for k = 1:T.num_nodes
             
-            theta = 2*pi*n/N;
-            remainder_angle = mod(theta,pi/3);
             
-            if remainder_angle == 0
-                h = T.radius*r;
-            else
-                gamma = pi*2/3 - remainder_angle;
-                h = T.radius*r/sin(gamma)*sin(pi/3);            
-            end
+%             theta = 2*pi*n/N;
+%             remainder_angle = mod(theta,pi/3);
+            
+%             if remainder_angle == 0
+%                 h = T.radius*r;
+%             else
+%                 gamma = pi*2/3 - remainder_angle;
+%                 h = T.radius*r/sin(gamma)*sin(pi/3);            
+%             end
 %             disp(h);
             
-            T.nodes(k,:) = h*[cos(theta), sin(theta)] + T.center(2:3);
+            T.nodes(k,:) = [grid_Y(k), grid_X(k)];
             
             dist = sqrt((p(:,2)-T.nodes(k,1)).^2 + (p(:,3)-T.nodes(k,2)).^2);
             odist = sqrt((op(:,2)-T.nodes(k,1)).^2 + (op(:,3)-T.nodes(k,2)).^2);
@@ -104,9 +104,11 @@ function T = orthogonal_projection(num_rings)
             
             
             
-        end
+        
            
     end
+    
+    figure; scatter(T.nodes(:,1), T.nodes(:,2));
     
     is_valid = ~isnan(T.on_chat) & ~isnan(T.off_chat);
     
@@ -123,7 +125,9 @@ end
     
 function p = get_points(off_sacs, density)
 
-    surface_dir = '../surface_points/';
+    C = get_constants;
+
+    surface_dir = C.surface_point_dir;
     num_cells = length(off_sacs);
     
     fns = cell(num_cells,1);
