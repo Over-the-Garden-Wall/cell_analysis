@@ -52,9 +52,8 @@ hist_denom = deg_count;
 
 % hist_denom = hist_denom+hist_denom(end:-1:1);
 % hist_denom = hist_denom(1:length(hist_data));
-subplot(2, 2, cn); hold all
-polar(rads, hist_data'./hist_denom / max(hist_data'./hist_denom));
-polar(rads, hist_denom/max(hist_denom)); title(num2str(c));
+subplot(2, 2, cn);
+plot(rads, [hist_data'./hist_denom / max(hist_data'./hist_denom), hist_data'/max(hist_data), hist_denom/max(hist_denom)]); title(num2str(c));
 end
 
 
