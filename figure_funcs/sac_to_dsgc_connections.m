@@ -6,7 +6,7 @@ sac_nums{1} = C.type.sure_off_sac;
 sac_nums{2} = C.type.on_sac;
 
 nhood_size = 1000;
-
+p = cell(2,1);
 
 for dn = 1:length(dsgc_nums);
     
@@ -30,7 +30,7 @@ for dn = 1:length(dsgc_nums);
     for l = 1:2
         
         p_min = min(p{l});
-        p_max = max(p{l});
+%         p_max = max(p{l});
         
         for k = 1:2
             p{l}(:,k) = ceil((p{l}(:,k) - p_min(k) + nhood_size/2)/nhood_size);

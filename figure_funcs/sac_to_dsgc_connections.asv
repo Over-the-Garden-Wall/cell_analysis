@@ -6,7 +6,7 @@ sac_nums{1} = C.type.sure_off_sac;
 sac_nums{2} = C.type.on_sac;
 
 nhood_size = 1000;
-
+p = cell(2,1);
 
 for dn = 1:length(dsgc_nums);
     
@@ -21,15 +21,16 @@ for dn = 1:length(dsgc_nums);
     p{1} = d_p(p_depth > 10 & p_depth < 50, 2:3);
     p{2} = d_p(p_depth > 50 & p_depth < 80, 2:3);
     
-    d_p = [];
+%     d_p = [];
     
     angle_denom = zeros(360,2);
     angle_num = zeros(360,2);
+    angle_count = zeros(360,2);
     
     for l = 1:2
         
         p_min = min(p{l});
-        p_max = max(p{l});
+%         p_max = max(p{l});
         
         for k = 1:2
             p{l}(:,k) = ceil((p{l}(:,k) - p_min(k) + nhood_size/2)/nhood_size);
@@ -77,7 +78,15 @@ for dn = 1:length(dsgc_nums);
             
             cont_angles = atan2(s_conts(5,:)-s_mid(3), s_conts(4,:)-s_mid(2));
             for k = 1:length(cont_angles)
-                angle_num(cont_angles, l)
+                kn = ceil(180*(cont_angles(k)/pi + 1));
+                angle_count(kn, l) = angle_count(kn, l) + 1;
+                angle_num(kn, l) = angle_num(kn, l) + s_conts(2,k);
+            end
+        end
+        
+    end
+    
+end
             
             
         
