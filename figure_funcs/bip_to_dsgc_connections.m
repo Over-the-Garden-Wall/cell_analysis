@@ -56,7 +56,7 @@ for dn = 1:length(dsgc_nums);
             
             
             sp = sp(sp_depth > 15 & sp_depth < 85, 2:3);
-            angles = atan2(s_mid(3)-sp(:,2), s_mid(2)-sp(:,1));
+            angles = atan2(sp(:,2)-s_mid(3), sp(:,1)-s_mid(2));
             
             for k = 1:2
                 sp(:,k) = ceil((sp(:,k) - p_min(k) + nhood_size/2)/nhood_size);
@@ -97,12 +97,10 @@ for dn = 1:length(dsgc_nums);
     plot_data = angle_num./angle_denom;
     plot_data = reshape(plot_data, [num_bins, 360/num_bins, 2]);
     plot_data = squeeze(sum(plot_data,1));
-    plot_data = [plot_data; plot_data(1,:)];
     
     plot_theta = ((1:360)'/180-1)*pi*ones(1,2);
     plot_theta = reshape(plot_theta, [num_bins, 360/num_bins, 2]);
     plot_theta = squeeze(mean(plot_theta,1));
-    plot_theta = [plot_theta; plot_theta(1,:)];
     
     
     figure;
@@ -115,7 +113,6 @@ for dn = 1:length(dsgc_nums);
     plot_data = angle_denom;
     plot_data = reshape(plot_data, [num_bins, 360/num_bins, 2]);
     plot_data = squeeze(sum(plot_data,1));
-    plot_data = [plot_data; plot_data(1,:)];
     
     figure;
     
