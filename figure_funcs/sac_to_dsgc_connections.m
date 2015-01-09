@@ -5,6 +5,11 @@ dsgc_nums = C.type.oodsgc;
 sac_nums{1} = C.type.sure_off_sac;
 sac_nums{2} = C.type.on_sac;
 
+max_cont_size = 500;
+
+num_bins = 24;
+    
+
 nhood_size = 1000;
 p = cell(2,1);
 
@@ -27,6 +32,7 @@ for dn = 1:length(dsgc_nums);
     angle_num = zeros(360,2);
     angle_count = zeros(360,2);
     
+    
     for l = 1:2
         
         p_min = min(p{l});
@@ -41,7 +47,7 @@ for dn = 1:length(dsgc_nums);
         
         for s = 1:length(sac_nums{l})
             
-            c_d = cell_data(sac_nums{l});
+            c_d = cell_data(sac_nums{l}(s));
             
             s_mid = c_d.get_midpoint;
             
@@ -68,7 +74,7 @@ for dn = 1:length(dsgc_nums);
             angles = angles(is_near_dsgc);
             angles = ceil((angles / pi + 1) * 180);
             
-            angle_denom(:,l) = angle_denom(:,l) + hist(angles, 1:360);
+            angle_denom(:,l) = angle_denom(:,l) + hist(angles, 1:360)';
             
             
             
@@ -80,11 +86,42 @@ for dn = 1:length(dsgc_nums);
             for k = 1:length(cont_angles)
                 kn = ceil(180*(cont_angles(k)/pi + 1));
                 angle_count(kn, l) = angle_count(kn, l) + 1;
-                angle_num(kn, l) = angle_num(kn, l) + s_conts(2,k);
+                angle_num(kn, l) = angle_num(kn, l) + min(s_conts(2,k), max_cont_size);
             end
         end
         
     end
+    
+    
+    %rebin
+    plot_data = angle_num./angle_denom;
+    plot_data = reshape(plot_data, [num_bins, 360/num_bins, 2]);
+    plot_data = squeeze(sum(plot_data,1));
+    
+    plot_theta = ((1:360)'/180-1)*pi*ones(1,2);
+    plot_theta = reshape(plot_theta, [num_bins, 360/num_bins, 2]);
+    plot_theta = squeeze(mean(plot_theta,1));
+    
+    
+    figure;
+    
+    polar(plot_theta, plot_data);
+    title(num2str(d));
+    
+    
+    num_bins = 24;
+    plot_data = angle_denom;
+    plot_data = reshape(plot_data, [num_bins, 360/num_bins, 2]);
+    plot_data = squeeze(sum(plot_data,1));
+    
+    figure;
+    
+    polar(plot_theta, plot_data);
+    title([num2str(d) ' denom']);
+    
+    
+    
+end
     
 end
             

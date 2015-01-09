@@ -1,6 +1,8 @@
 function [surface_points surf_edge_count] = find_surface_points(cell_no)
     
-    root_dir = '~/stratification/point_data/'; 
+    C = get_constants;
+    
+    root_dir = C.raw_point_dir; 
 
     fns = dir(root_dir);
     

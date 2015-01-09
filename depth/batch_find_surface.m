@@ -1,4 +1,6 @@
-fns = dir('./point_data/');
+C = get_constants;
+
+fns = dir(C.raw_point_dir);
 
 cell_nums = zeros(length(fns),1);
 for n = 1:length(fns)
@@ -18,7 +20,7 @@ cell_nums = unique(cell_nums);
 cell_nums(cell_nums==0) = [];
 
 for n = 1:length(cell_nums)
-    fn = ['./surface_points/cell_' num2str(cell_nums(n)) '_surface.mat'];
+    fn = [C.surface_point_dir 'cell_' num2str(cell_nums(n)) '_surface.mat'];
     
     if ~exist(fn,'file')
         disp(fn)
