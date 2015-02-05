@@ -7,7 +7,7 @@ sac_nums{2} = C.type.on_sac;
 
 max_cont_size = 500;
 
-num_bins = 24;
+num_bins = 72;
     
 
 

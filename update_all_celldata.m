@@ -1,13 +1,15 @@
 function update_all_celldata
     
     C = get_constants;
-    types = fieldnames(C.type);
     
-    cell_nums = [];
-    for k = 1:length(types)
-            cell_nums = [cell_nums C.type.(types{k})];
+    fns = dir(C.point_dir);
+    
+    for n = 3:length(fns)
+        fn = fns(n).name;
+        underscores = find(fn == '_');
+        
+        cell_num = str2double(fn(underscores(1)+1:underscores(2)-1));
+        c_d = cell_data(cell_num, true);
     end
-    for c = unique(cell_nums);
-        cell_dat = cell_data(c,true);
-    end
+    
 end

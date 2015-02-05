@@ -1,22 +1,18 @@
-function sac_to_sac_connections
+function [mean_axis, pref_axes] = dsgc_preferred_direction(d)
 
 C = get_constants;
-dsgc_nums = C.type.oodsgc;
 sac_nums{1} = C.type.sure_off_sac;
 sac_nums{2} = C.type.on_sac;
 
 max_cont_size = 500;
-
-num_bins = 24;
     
-
 
 nhood_size = 1000;
 p = cell(2,1);
-
-for dn = 1:length(dsgc_nums);
-    
-    d = dsgc_nums(dn);
+% 
+% for dn = 1:length(dsgc_nums);
+%     
+%     d = dsgc_nums(dn);
     
     c_d = cell_data(d);
     gc_mid = c_d.get_midpoint(true);
@@ -104,55 +100,21 @@ for dn = 1:length(dsgc_nums);
         
     end
     
+    norm_data = angle_num./angle_denom;
+    norm_data = [norm_data(end-88:end,:); norm_data; norm_data(1:99,:)];
+    kern = ones(180, 1)/180;
     
-    %rebin
-    plot_data = angle_num./angle_denom;
-    plot_data = reshape(plot_data, [num_bins, 360/num_bins, 2]);
-    plot_data = squeeze(sum(plot_data,1));
-    plot_data = [plot_data; plot_data(1,:)];
+    smoothed_data = [conv(norm_data(:,1), kern, 'valid'), conv(norm_data(:,2), kern, 'valid')];
+    [dummy, max_angles] = max(smoothed_data);
     
-    plot_theta = ((1:360)'/180-1)*pi*ones(1,2);
-    plot_theta = reshape(plot_theta, [num_bins, 360/num_bins, 2]);
-    plot_theta = squeeze(mean(plot_theta,1));
-    plot_theta = [plot_theta; plot_theta(1,:)];
+    [dummy, max_total] = max(sum(smoothed_data,2));
     
-    figure;
+    max_angles = (max_angles/180-1)*pi;
+    max_total = (max_total/180-1)*pi;
     
-    subplot(2,2,1);
-    
-    
-    polar(plot_theta, plot_data);
-    title(num2str(d));
-    
-    
-    num_bins = 24;
-    plot_data = angle_denom;
-    plot_data = reshape(plot_data, [num_bins, 360/num_bins, 2]);
-    plot_data = squeeze(sum(plot_data,1));    
-    plot_data = [plot_data; plot_data(1,:)];
-    
-    
-    subplot(2,2,2);
-    polar(plot_theta, plot_data);
-    title([num2str(d) ' denom']);
-    
-    subplot(2,2,3); hold all
-    
-    plot(hull{1}(:,1), hull{1}(:,2), 'lineWidth', 2);
-    plot(hull{2}(:,1), hull{2}(:,2), 'lineWidth', 2);
-    
-    plot([C.min_xy(2), C.max_xy(2), C.max_xy(2), C.min_xy(2), C.min_xy(2),]', ...
-        [C.min_xy(1), C.min_xy(1), C.max_xy(1), C.max_xy(1), C.min_xy(1)]', ...
-        'Color', [0 0 0], 'lineWidth', 2);
-    
-    scatter(gc_mid(2), gc_mid(3), '*', 'markerEdgeColor', [0 0 0]);
-    
-    title([num2str(d) ' hull']);
-    
-    set(gcf, 'Position', [0 0 800 800]);
-    saveas(gcf, ['~/data/stratification/images/sac2dsgc' num2str(d) '.png']);
-    close all
-end
+    pref_axes = [-cos(max_angles); -sin(max_angles)];
+    mean_axis = [-cos(max_total); -sin(max_total)];
+% end
     
 end
             

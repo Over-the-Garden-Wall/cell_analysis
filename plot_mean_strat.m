@@ -6,7 +6,8 @@ function plot_mean_strat(cell_nos, relevant_portion, invertaxis)
         invertaxis = 'none';
     end
     C = get_constants;
-    colmap = C.colormap;
+%     colmap = C.colormap;
+    colmap = make_colormap(length(cell_nos), 5);
 %     colmap(9,:) = [0 0 0 ];
     
     if ~exist('relevant_portion','var');
