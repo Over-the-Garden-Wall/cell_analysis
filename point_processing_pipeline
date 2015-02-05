@@ -1,9 +1,10 @@
 batch_find_surface;
 
-load('./conns.mat');
-load('./T.mat');
 
 C = get_constants;
+
+load(C.raw_conn_loc);
+load(C.trans_loc);
 
 transform_points('./surface_points',C.point_dir, T);
 conns = transform_conns(conns,T);
