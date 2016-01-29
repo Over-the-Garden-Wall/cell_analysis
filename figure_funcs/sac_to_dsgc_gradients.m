@@ -4,9 +4,9 @@ close all
 
 % oocns = C.type.oodsgc;
 
-oocns = [[90001 25005 20213 20220 17080], [90002], [17161 20233], [20239 20210 20254 20245]];
-oocn_dir = [1 1 1 1 1 2 3 3 4 4 4 4];
-colors = [1 0 0; 0 .7 0; .8 .8 0; 1 0 1];
+oocns = [[90001 25005 20213 20220 17080], [90002], [17161 20233], [20239 20210 20254 20245], 20179];
+oocn_dir = [1 1 1 1 1 2 3 3 4 4 4 4 5];
+colors = [1 0 0; 0 .7 0; .8 .8 0; 1 0 1; 0 0 0];
 
 num_dsgc = length(oocns);
 
@@ -51,13 +51,14 @@ for dn = 1:num_dsgc
     
     all_conts = double(c_d.contacts);
     
-    
+%     for l = 1:2;
     
         
         for t = 1:num_types
             [dummy, my_ind] = find(oodsgc_axes(:,1) == d, 1, 'first');   
-            daxis = oodsgc_axes(my_ind,l*2 + 2 + (0:1));
-        
+%             daxis = oodsgc_axes(my_ind,l*2 + 2 + (0:1));
+            daxis = oodsgc_axes(my_ind,4:5);
+            
             layer_mid = mean(p{t});
             
             cns = C.type.(types{t});

@@ -1,4 +1,11 @@
-function [total_contact, total_vox_in_hull] = get_contact_density_whulls(contact_cells, hull_cells)
+function [total_contact, total_vox_in_hull] = get_contact_density_whulls(contact_cells, hull_cells, depth_range, contact_range)
+
+    if ~exist('depth_range','var') || isempty(depth_range)
+        depth_range = [0 100];
+    end
+    if ~exist('contact_range','var') || isempty(contact_range)
+        contact_range = [0 Inf];
+    end
 
 
     C = get_constants;
@@ -19,19 +26,30 @@ function [total_contact, total_vox_in_hull] = get_contact_density_whulls(contact
     for c = 1:num_cc
         cell_dat = cell_data(contact_cells(c));
         p = cell_dat.get_surface;
-        p = p(:,2:3);
+        d = C.f(p(:,1));
+        p = p(d >= depth_range(1) & d <= depth_range(2),2:3);
+        
+        conts = double(cell_dat.contacts);
+        conts = conts(:,conts(2,:) >= contact_range(1) & conts(2,:) <= contact_range(2));
+        
+        cont_depth = C.f(conts(3,:));
         
         for h = 1:num_hc
-                if cell_dat.contact_map.isKey(hull_cells(h))
-                    map_id = cell_dat.contact_map(hull_cells(h));
-                    total_contact(c,h) = cell_dat.contact_area(map_id);
+                
+                total_contact(c,h) = sum(conts(2, conts(1,:) == hull_cells(h) & ...
+                    cont_depth >= depth_range(1) & cont_depth <= depth_range(2)));
+                
+                
+                cell_dir = [C.hull_dir 'c' num2str(contact_cells(c)) '/'];
+                if ~exist(cell_dir, 'dir')
+                    mkdir(cell_dir);
+                end
+                cell_hull_dir = [cell_dir 'c' num2str(hull_cells(h)) '/'];
+                if ~exist(cell_hull_dir, 'dir')
+                    mkdir(cell_hull_dir);
                 end
                 
-                if ~exist([C.hull_dir 'c' num2str(contact_cells(c)) '/'], 'dir')
-                    mkdir([C.hull_dir 'c' num2str(contact_cells(c)) '/']);
-                end
-                
-                hull_fn = [C.hull_dir 'c' num2str(contact_cells(c)) '/c' num2str(hull_cells(h)) '.mat'];
+                hull_fn = [cell_hull_dir 'd_' num2str(depth_range(1)), '_', num2str(depth_range(2)), '.mat'];
                 
                 
             if exist(hull_fn, 'file')

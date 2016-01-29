@@ -9,7 +9,11 @@ function update_all_celldata
         underscores = find(fn == '_');
         
         cell_num = str2double(fn(underscores(1)+1:underscores(2)-1));
-        c_d = cell_data(cell_num, true);
+        
+        warning('hack in place')
+        if cell_num >= 60463        
+            c_d = cell_data(cell_num, true);
+        end
     end
     
 end

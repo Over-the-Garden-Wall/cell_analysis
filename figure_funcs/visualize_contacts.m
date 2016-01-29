@@ -1,4 +1,8 @@
-function h = visualize_contacts(ref_cell, cell_nums)
+function h = visualize_contacts(ref_cell, cell_nums, size_threshold)
+
+    if ~exist('size_threshold','var')  || isempty(size_threshold)
+        size_threshold = 0;
+    end
 
     C = get_constants;
     
@@ -8,6 +12,8 @@ function h = visualize_contacts(ref_cell, cell_nums)
     
     c_d = cell_data(ref_cell);
     conts = double(c_d.contacts);
+    conts = conts(:,conts(2,:) >= size_threshold);
+    
     for n = 1:length(cell_nums)
         
         is_me = false(1,size(conts,2));

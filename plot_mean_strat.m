@@ -1,14 +1,18 @@
-function plot_mean_strat(cell_nos, relevant_portion, invertaxis)
+function strats = plot_mean_strat(cell_nos, relevant_portion, invertaxis, colmap)
 
 
 
-    if ~exist('invertaxis','var');
+    if ~exist('invertaxis','var') || isempty(invertaxis);
         invertaxis = 'none';
     end
+    if ~exist('colmap', 'var') || isempty(invertaxis)
+        colmap = colormap('Lines');
+    end
+    
     C = get_constants;
 %     colmap = C.colormap;
-    colmap = make_colormap(length(cell_nos), 5);
-%     colmap(9,:) = [0 0 0 ];
+%     colmap = make_colormap(length(cell_nos), 5);
+    
     
     if ~exist('relevant_portion','var');
         relevant_portion = [C.strat_x(1) C.strat_x(end)];
@@ -47,6 +51,7 @@ function plot_mean_strat(cell_nos, relevant_portion, invertaxis)
          for k = 1:num_types   
          plot(relevant_portion(1):relevant_portion(end), strats(:,k), 'lineWidth', 2, 'Color', colmap(k,:));
          end
+         set(gca, 'YTick', []);
      elseif strcmp(invertaxis,'xy')
             plot(strats(:,k), relevant_portion(1):relevant_portion(end), 'lineWidth', 2);
             set(gca, 'Ydir', 'reverse');
@@ -54,12 +59,13 @@ function plot_mean_strat(cell_nos, relevant_portion, invertaxis)
             figure;
             plot(cumsum(strats(:,k))*100, relevant_portion(1):relevant_portion(end), 'lineWidth', 2);
             set(gca, 'Ydir', 'reverse');
-            
+            set(gca, 'XTick', []);
      elseif strcmp(invertaxis,'x')
          for k = 1:num_types   
          plot(relevant_portion(1):relevant_portion(end), strats(:,k), 'lineWidth', 2);
          end
          set(gca, 'Xdir', 'reverse');
+         set(gca, 'YTick', []);
         end
    
 end

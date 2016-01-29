@@ -1,4 +1,8 @@
-function info_list = contact_info(cell_numsa, cell_numsb)
+function info_list = contact_info(cell_numsa, cell_numsb, vericose_only)
+
+if ~exist('vericose_only', 'var') || isempty(vericose_only)
+    vericose_only = false;
+end
 
 num_a = length(cell_numsa);
 num_b = length(cell_numsb);
@@ -39,12 +43,19 @@ for cn = 1:num_a
     c_d = cell_data(c);
     myconts = double(c_d.contacts);
     
+    
+    if vericose_only
+        myconts = detect_vericose_contacts(c, 1000, 3, 50000, 0);
+    else
+        myconts = double(c_d.contacts);
+    end
+    
     for dn = 1:num_b
         
         d = info_list.number(dn+num_a);
         
-        pair_num = dn + (cn-1)*num_a;
-        cells(pair_num,:) = [cn dn];
+        pair_num = dn + (cn-1)*num_b;
+        cells(pair_num,:) = [cn dn+num_a];
         
         is_me = myconts(1,:) == d;
         

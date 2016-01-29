@@ -2,17 +2,18 @@ function write_transformed_hdf5(cell_nos, out_resolution, fn)
 
     try
 
+    C = get_constants;
+        
     MAX_POINTS = 10^7;
     POINT_DUMP_THRESHOLD = MAX_POINTS/2;
 
     tic
-    load('./T.mat');
+    load(C.trans_loc);
     
     chunk_size = 128*ones(1,3);
 
-    C = get_constants;
     
-    root_dir = './point_data/';
+    root_dir = C.raw_point_dir;
     fns = dir(root_dir);
     is_valid_fn = false(length(fns),1);
     cell_nums = zeros(length(fns),1);
@@ -49,6 +50,12 @@ function write_transformed_hdf5(cell_nos, out_resolution, fn)
     end
     
     vol_size = 1+ceil((max_val - min_val)./out_resolution);
+%     
+%     %
+%     warning('hack in place');
+%     vol_size(1) = vol_size(1) + 7;
+%     %
+    
     num_chunks = ceil(vol_size./chunk_size);
     
     all_p = zeros(MAX_POINTS, 4);    
@@ -56,18 +63,24 @@ function write_transformed_hdf5(cell_nos, out_resolution, fn)
     
     delete(fn);
     create_hdf5_file(fn, '/main', vol_size, chunk_size, [0 0 0]);
-    
+    dbg = [Inf, -Inf];
     for n = valid_list
         
 %         n = valid_list(nk);
         
         load([root_dir fns(n).name]);
         
+%         figure; scatter(p(:,1), p(:,3), 1);
         p = apply_transform(T,double(p));
-        
+        dbg(1) = min([dbg(1); p(:,1)]);
+        dbg(2) = max([dbg(2); p(:,1)]);
+%         figure; scatter(p(:,1), p(:,3), 1);
         for k = 1:3
             p(:,k) = round((p(:,k)-min_val(k))/out_resolution(k))+1;
         end
+        
+        p(p<1) = 1; %unsure why this is necessary. Possibly non-updated transformed surfaces?
+        
         
         p = unique(p,'rows');
         
@@ -83,9 +96,14 @@ function write_transformed_hdf5(cell_nos, out_resolution, fn)
             
             all_p = all_p(1:all_pk,:);
             
-            chunk_num = ceil(all_p(:,1)/chunk_size(1)) + ...
-                num_chunks(1) * ceil(all_p(:,2)/chunk_size(2) - 1) + ...
-                num_chunks(1)*num_chunks(2) * ceil(all_p(:,3)/chunk_size(3) - 1);
+            chunk_num = sub2ind(num_chunks, ...
+                ceil(all_p(:,1)/chunk_size(1)), ...
+                ceil(all_p(:,2)/chunk_size(2)), ...
+                ceil(all_p(:,3)/chunk_size(3)));
+            
+%             chunk_num = ceil(all_p(:,1)/chunk_size(1)) + ...
+%                 num_chunks(1) * ceil(all_p(:,2)/chunk_size(2) - 1) + ...
+%                 num_chunks(1)*num_chunks(2) * ceil(all_p(:,3)/chunk_size(3) - 1);
             
             t_list = unique(chunk_num);
 %             t_list(t_list==0) = [];
@@ -103,14 +121,18 @@ function write_transformed_hdf5(cell_nos, out_resolution, fn)
                 end
                 
                 chunk_vol = get_hdf5_file(fn, '/main', chunk_bounds(1,:), chunk_bounds(2,:));
+%                 disp('---');
+%                 disp(min(sub_p));
                 for k = 1:size(sub_p,1)
                     chunk_vol(sub_p(k,1), sub_p(k,2), sub_p(k,3)) = sub_p(k,4);
                 end
+%                 disp(size(chunk_vol));
                 write_hdf5_file(fn, '/main', chunk_bounds(1,:), chunk_bounds(2,:), chunk_vol);
                 
-                
+%                 figure; scatter(sub_p(:,1), sub_p(:,3), 1)
+%                 figure; imagesc(squeeze(any(chunk_vol,2)));
             end
-            
+%             figure; scatter(all_p(:,1), all_p(:,3), 1)
             
             all_p = zeros(MAX_POINTS, 4);    
             all_pk = 0;

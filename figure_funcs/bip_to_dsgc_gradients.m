@@ -2,22 +2,22 @@ C = get_constants;
 
 close all
 
-% oocns = C.type.oodsgc;
+oocns = C.type.gc72;
 
-oocns = [[90001 25005 20213 20220 17080], [90002], [17161 20233], [20239 20210 20254 20245]];
-oocn_dir = [1 1 1 1 1 2 3 3 4 4 4 4];
+% oocns = [[90001 25005 20213 20220 17080], [90002], [17161 20233], [20239 20210 20254 20245]];
+% oocn_dir = [1 1 1 1 1 2 3 3 4 4 4 4];
 colors = [1 0 0; 0 .7 0; .8 .8 0; 1 0 1];
 
 num_dsgc = length(oocns);
 
-% oodsgc_axes = zeros(length(oocns),7);
-% for n = 1:length(oocns)
-%     [mean_axis, pref_axes] = dsgc_preferred_direction(oocns(n));
-%     oodsgc_axes(n,:) = [oocns(n), mean_axis', pref_axes(:,1)', pref_axes(:,2)'];    
-% end
-% save('~/data/stratification/oodsgc_pref_axes.mat', 'oodsgc_axes');
+oodsgc_axes = zeros(length(oocns),7);
+for n = 1:length(oocns)
+    [mean_axis, pref_axes] = dsgc_preferred_direction(oocns(n));
+    oodsgc_axes(n,:) = [oocns(n), mean_axis', pref_axes(:,1)', pref_axes(:,2)'];    
+end
+save('~/data/stratification/oodsgc_pref_axes.mat', 'oodsgc_axes');
 
-load('~/data/stratification/oodsgc_pref_axes.mat');
+% load('~/data/stratification/oodsgc_pref_axes.mat');
 
 
 types = {{'t2', 't3a', 't3b', 't4'}, {'t5w', 't5h', 't5l'}};

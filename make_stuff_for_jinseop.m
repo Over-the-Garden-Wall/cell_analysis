@@ -37,7 +37,7 @@ function make_stuff_for_jinseop
             s = s(1:100);
         end
         
-        all_strats(1:length(s),k) = s;
+        all_strats(1:length(s),k) = s/sum(s);
     end
                 
     save('/data/home/greenem/data/stratification/jinseop_helper/cell_strats.mat','all_strats');

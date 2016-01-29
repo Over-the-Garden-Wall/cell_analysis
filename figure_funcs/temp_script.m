@@ -1,15 +1,28 @@
-
 C = get_constants;
 
-types = {'xbc', 't5w', 't5', 't6', 't7', 't89', 'rbc'};
+c{1} = C.type.sure_off_sac;
+c{2} = C.type.on_sac;
 
-ranges = {[56 58], [49.5 52.5; 59 62], [52 61], [56 60; 69 73], [65 73], [75 85], [85 95]};
+for n = 1:length(c);
+    cinfo = contact_info(c{n},c{n}, false);
+    
+    pairs = unique(cinfo.cell_ids, 'rows');
+    soma_locs = [cinfo.soma_loc(pairs(:,1),:), cinfo.soma_loc(pairs(:,2),:)];
+    p_dist = sqrt(sum((soma_locs(:,1:3)-soma_locs(:,4:6)).^2 , 2));
+    
+    p_total = zeros(size(pairs,1),1);
+    for p = 1:size(pairs,1);
+        is_me = cinfo.cell_ids(:,1) == pairs(p,1) & cinfo.cell_ids(:,2) == pairs(p,2);
+        p_total(p) = sum(cinfo.contact_size(is_me));
+    end
+    
+    [p_whist x{n}] = weighted_hist(p_dist, p_total, 15);
+    p_hist = hist(p_dist, x{n});
+    
+    p_data{n} = p_whist ./ p_hist;
+end
 
-
-all_cells = C.type.on_bc;
-perc_vals = zeros(length(all_cells),length(types));
-
-for k = 1:length(types)
-   
-    perc_vals(:,k) = percent_strat_within_range(all_cells, ranges{k}, [40 100]);
+figure; hold all
+for n = 1:length(p_data);
+    plot(x{n}, p_data{n}, 'lineWidth', 2);
 end

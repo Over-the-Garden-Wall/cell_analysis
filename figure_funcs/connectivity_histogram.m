@@ -1,5 +1,7 @@
 function [density_matrix, overlap_matrix, cn1_density, cn2_density] = connectivity_histogram(cn1, cn2, min_overlap)
 
+    C = get_constants;
+    
     nc1 = length(cn1);
     nc2 = length(cn2);
 
@@ -37,6 +39,10 @@ function [density_matrix, overlap_matrix, cn1_density, cn2_density] = connectivi
     
     overlap_matrix(overlap_matrix < min_overlap) = 0;
     
+    face_to_area = (C.res(1)*(C.res(2)+C.res(3)) + C.res(2)*C.res(3))/3;
+    
+    connectivity_matrix = connectivity_matrix*face_to_area;
+    
     density_matrix = connectivity_matrix ./ overlap_matrix;
     density_matrix(isinf(density_matrix)) = NaN;
     
@@ -44,7 +50,7 @@ function [density_matrix, overlap_matrix, cn1_density, cn2_density] = connectivi
     cn1_density = sum(connectivity_matrix,2)./sum(overlap_matrix,2);
     
     figure; hist(cn1_density(~isnan(cn1_density) & ~isinf(cn1_density)),20);
-    figure; hist(cn2_density(~isnan(cn2_density) & ~isinf(cn2_density)),20);
+    figure; hist(cn2_density(~isnan(cn2_density) & ~isinf(cn2_density)),40);
     
 end
     

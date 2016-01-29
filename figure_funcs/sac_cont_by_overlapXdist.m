@@ -2,8 +2,8 @@ C = get_constants;
 
 colmap = colormap('lines');
 % types = {'t1', 't3a'};
-% types = {'t1', 't2', 't3a', 't3b', 'A2'};
-types = {'t5w', 't5l', 't5h', 'xbc', 't6', 't7', 't89', 'tRBC'};
+% types = {'BC1', 'BC2', 'BC3a', 'BC3b', 'BC4'};
+types = {'BC5t', 'BC5o', 'BC5i', 'XBC', 'BC6', 'BC7', 'BC89', 'RBC'};
 
 
 % sac_nums = C.type.sure_off_sac;
@@ -66,7 +66,7 @@ density_sum = zeros(length(bins),length(types));
 
 
 
-% relevant_portion = [0 60];
+% relevant_portion = [10 60];
 relevant_portion = [40 80];
 
 relevant_x = relevant_portion(1):relevant_portion(2);
@@ -154,11 +154,13 @@ figure; hold on
 % C = get_constants;
 
 for k = 1:length(types)
-    plot(bins, overlap(:,k)*100, 'LineWidth', 2, 'Color', colmap(k,:));
+    plot(bins, overlap(:,k)*100, 'LineWidth', 2, 'Color', C.colormap(types{k}));
 end
 
+
 t = get(gca, 'YLim');
-set(gca,'YLim',[0 t(2)])
+% set(gca,'YLim',[0 t(2)])
+set(gca,'YLim',[0 3])
     set(gca, 'TickDir', 'in');
     
     set(gca, 'FontSize', 20);

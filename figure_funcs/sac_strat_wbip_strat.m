@@ -1,8 +1,11 @@
 % close all
 
 C = get_constants;
-colmap = colormap('Lines');
-cell_nums = C.type.on_sac;
+
+sac_color = C.colormap('on_sac');
+
+cell_nums = C.type.off_sac;
+% cell_nums = C.type.sure_off_sac;
 % cell_nums(cell_nums==15018) = [];
 % cell_nums(cell_nums==17177) = [];
 
@@ -38,8 +41,8 @@ quart_diff = quart_diff(:,is_in);
 quartile_data = quartile_data(:,is_in);
 bins = bins(is_in);
 
-
-cmap = [1, .75, 0]'*[1 1 1] + (1-[1, .75, 0])'*C.colormap(6,:);
+% cmap = colmap;
+cmap = [1, .25, 0]'*[1 1 1] + (1-[1, .25, 0])'*sac_color;
 % cmap(:,3) = 1;
 
 
@@ -52,7 +55,8 @@ for n = 1:2
 end
 
 
-relevant_portion = [40 100];
+relevant_portion = [0 100];
+% relevant_portion = [0 60];
 
 set(ax,'YLim', relevant_portion);
 
@@ -62,7 +66,7 @@ set(ax,'YLim', relevant_portion);
 %     area_h(n) = area(bins, quart_diff(n,:)','LineStyle', 'none', 'FaceColor', cmap(n,:));
 % end
 
-line_h = plot(bins, quartile_data(2,:), 'LineWidth', 2, 'Color', cmap(end,:));
+line_h = plot(bins, quartile_data(2,:), 'LineWidth', 2, 'Color', sac_color);
 % colormap(cmap);
 
     set(gcf, 'Position', [0 0 640 640]);
@@ -75,7 +79,7 @@ legend([area_h(2) line_h], {'25-75th percentiles', 'Median depth'});
 ylabel('IPL depth (%)', 'FontSize', 20);
 xlabel('Distance for soma (microns)', 'FontSize', 20);
 
-set(gca,'XAxisLocation', 'bottom');
+% set(gca,'XAxisLocation', 'top');
 set(gca,'YDir', 'reverse');
 
 % title('Stratification of all J cells by depth');
@@ -83,8 +87,8 @@ set(gca,'YDir', 'reverse');
 
 
 
-% types = {'t1','t2','t3a','t3b','t4'};
-types = {'t5w', 't5l', 't5h', 'xbc', 't6', 't7', 't89', 'tRBC'};
+% types = {'BC1','BC2','BC3a','BC3b','BC4'};
+types = {'BC5t', 'BC5i', 'BC5o', 'XBC', 'BC6', 'BC7', 'BC89', 'RBC'};
 
 
 relevant_x = C.strat_x(C.strat_x >= relevant_portion(1) & C.strat_x <= relevant_portion(2));
@@ -96,6 +100,7 @@ hold on
 
 ax2 = axes('Position',get(ax,'Position'));
 
+% set(ax2, 'XAxisLocation','bottom');
 set(ax2, 'XAxisLocation','top');
 set(ax2, 'Color','none');
 set(ax2, 'YDir', 'reverse');
@@ -127,16 +132,15 @@ for k = 1:length(types);
     end
 %     strat_norm(k) = sum(strats(:,k));
 %     strats(:,k) = strats(:,k)/strat_norm(k);
-    plot(ax2, strats(:,k) * 410 / 1000 / 1000 * 100, relevant_x, 'LineWidth', 2, 'Color', colmap(k,:));
+%     plot(ax2, strats(:,k) * 410 / 1000 / 1000 * 100, relevant_x, 'LineWidth', 2, 'Color', C.colormap(types{k}));
+    plot(ax2, strats(:,k)/sum(strats(:,k))*length(strats(:,k)), relevant_x, 'LineWidth', 2, 'Color', C.colormap(types{k}));
 %     plotyy(relevant_x, strats(:,k), relevant_x
 end
 
 csvwrite('bip_strats_dat.txt',M);
-set(ax2, 'XLim', [0 2000]);
-set(ax2, 'XTick', 0:400:2000);
+set(ax2, 'XLim', [0 10]);
+set(ax2, 'XTick', 0:2:10);
 set(ax2, 'YTick', []);
-
-xlabel('BC surface voxels');
 
 set(gca, 'FontSize', 20);
     
