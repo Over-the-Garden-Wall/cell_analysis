@@ -1,5 +1,13 @@
 function constants = get_constants()
 
+    ROOT_DATA_DIR = '/data/home/greenem/data/stratification/';
+    ROOT_FXN_DIR = '/data/home/greenem/cell_analysis/';
+    
+    constants.raw_conn_loc = [ROOT_FXN_DIR '/conns.mat'];
+    constants.trans_loc = [ROOT_FXN_DIR '/T.mat'];
+
+    constants.conn_loc = [ROOT_DATA_DIR '/trans_conns.mat'];
+    
     constants.celldata_version = 1.88;
 
     constants.f = @z2ipldepth;
@@ -7,28 +15,25 @@ function constants = get_constants()
     
     constants.res = [16.5 16.5 23]*2;%*1.15;
     constants.strat_x = -20:120;
-    constants.point_dir = '/data/home/greenem/data/stratification/surface_points_trans/';
-    constants.raw_point_dir = '/data/home/greenem/data/stratification/point_data/';
-    constants.surface_point_dir = '/data/home/greenem/data/stratification/surface_points/';
-    constants.cell_data_dir = '/data/home/greenem/data/stratification/cell_data/';
+    constants.point_dir = [ROOT_DATA_DIR 'surface_points_trans/'];
+    constants.raw_point_dir = [ROOT_DATA_DIR  'point_data/'];
+    constants.surface_point_dir = [ROOT_DATA_DIR 'surface_points/'];
+    constants.cell_data_dir = [ROOT_DATA_DIR 'cell_data/'];
     
     
     constants.ventral_axis = [-.4452, .8954]; % mean angle of j and minij axes
     
-    constants.raw_conn_loc = '/data/home/greenem/data/stratification/conns.mat';
-    constants.conn_loc = '/data/home/greenem/data/stratification/trans_conns.mat';
-    constants.trans_loc = '/data/home/greenem/data/stratification/T.mat';
-    constants.skele_dir = '/data/home/greenem/data/stratification/skeletons/';
-    constants.skele_untrans_dir = '/data/home/greenem/data/stratification/untrans_skeletons/';
-    constants.image_dir = '/data/home/greenem/data/stratification/images/';
+    constants.skele_dir = [ROOT_DATA_DIR 'skeletons/'];
+    constants.skele_untrans_dir = [ROOT_DATA_DIR '/untrans_skeletons/'];
+    constants.image_dir = [ROOT_DATA_DIR '/images/'];
     
     constants.soma_loc_threshold = 20;
-    constants.soma_dir = '/data/home/greenem/data/stratification/soma_points/';
+    constants.soma_dir = [ROOT_DATA_DIR '/soma_points/'];
     constants.dist_bin = 10;
     constants.angle_step = 2*pi/100;
-    constants.strat_dir = '/data/home/greenem/data/stratification/cell_strats/';
+    constants.strat_dir = [ROOT_DATA_DIR '/cell_strats/'];
     constants.axial_x_min = -20;
-    constants.celldata_dir = '/data/home/greenem/data/stratification/cell_data/';
+    constants.celldata_dir = [ROOT_DATA_DIR '/cell_data/'];
     
     constants.sac_bins = 10:20:20*6.5;
     constants.j_bins = 15:30:30*6;
@@ -41,7 +46,7 @@ function constants = get_constants()
     constants.volume_bounds = [-3.5    0.05    0.3; 2.1    34.5   30]  * 10^4;
     
     
-    constants.hull_dir = '/data/home/greenem/data/stratification/hull_intersects/';
+    constants.hull_dir = [ROOT_DATA_DIR '/hull_intersects/'];
     
     constants.cell_dsmp_fact = [round(abs(constants.f(1000)-constants.f(0))) 1000 1000 ] .* [1 1 1];
     
