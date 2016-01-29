@@ -20,15 +20,15 @@ types = {'BC5t', 'BC5o', 'BC5i', 'XBC', 'BC6', 'BC7', 'BC89', 'RBC'};
 bins = C.sac_bins;
 
 
-warning('sebastian analysis hack');
-bins = [0, 1000]; bin_size = 1000;
-sac_nums = C.type.gc63;
-BC5s = [C.type.BC5i C.type.BC5t C.type.BC5o];
-for k = 1:length(BC5s);
-    types{k} = ['bc' num2str(BC5s(k))];
-    C.type.(types{k}) = BC5s(k);
-    C.colormap(types{k}) = rand(1,3)*.7;
-end
+% warning('sebastian analysis hack');
+% bins = [0, 1000]; bin_size = 1000;
+% sac_nums = C.type.gc63;
+% BC5s = [C.type.BC5i C.type.BC5t C.type.BC5o];
+% for k = 1:length(BC5s);
+%     types{k} = ['bc' num2str(BC5s(k))];
+%     C.type.(types{k}) = BC5s(k);
+%     C.colormap(types{k}) = rand(1,3)*.7;
+% end
 
 % sac_nums = C.type.off_sac;
 num_sacs = length(sac_nums);
@@ -145,6 +145,7 @@ for k = 1:length(types);
     
     
     is_valid = total_vox_in_hull{k} > min_thresh;
+    num_valid_sac = sum(any(is_valid,2));
     
     total_contact{k} = total_contact{k}(is_valid(:))*.2915;
     total_vox_in_hull{k} = total_vox_in_hull{k}(is_valid(:));
@@ -179,7 +180,7 @@ for k = 1:length(types);
         my_dens = density(bin_num==n);
 %         county{k}(n) = sum(bin_num==n);
         plot_data{k}(n) = mean(my_dens);
-        plot_ste{k}(n) = std(my_dens)/sqrt(length(my_dens)-1);
+        plot_ste{k}(n) = std(my_dens)/sqrt(num_valid_sac-1);
         plot_normfact(n) = mean(total_vox_in_hull{k}(bin_num==n));
         prob_nonzero(n) = mean(my_dens>0);
     end
