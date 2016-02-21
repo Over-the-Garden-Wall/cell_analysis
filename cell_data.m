@@ -408,3 +408,271 @@ classdef cell_data < handle
         
     end
 end
+
+function density = get_density_all(cell_num, varargin)
+    %compute density of cell by depth, angle, and distance.
+    %If use_soma == true, uses the soma as the reference center. Otherwise
+    %uses arbor mean
+    
+    p = inputParser;    
+    p.addRequired('cell_num', @isnumeric);
+    p.addOptional('force_recalc', false, @islogical);
+    p.addOptional('use_soma', check_to_use_soma(cell_num), @islogical);
+    
+    p.parse(cell_num, varargin{:});    
+    s = p.Results;
+    
+   
+    C = get_constants;
+    
+    if s.use_soma
+        out_fn = [C.strat_dir '/cell_' num2str(s.cell_num) '_soma_' 'all.mat'];
+    else
+        out_fn = [C.strat_dir '/cell_' num2str(s.cell_num) '_arbor_' 'all.mat'];
+    end
+    
+    if exist(out_fn,'file') && ~s.force_recalc
+        load(out_fn)
+        return
+    end
+    
+    
+    
+    
+        
+    
+    mean_point = get_mean_point(s.cell_num, s.use_soma); 
+    
+
+    fn = [C.point_dir '/cell_' num2str(s.cell_num) '_surface.mat'];
+    load(fn);
+    
+    num_points = size(surface_points,1);
+    
+    
+    dist = sqrt(sum((surface_points(:,2:3) - ones(num_points,1)*mean_point(2:3)).^2,2));
+    depth = C.f(surface_points(:,1));
+    angle = atan2(surface_points(:,2) - mean_point(2), surface_points(:,3) - mean_point(3));
+    
+    
+    depth = round(depth) - C.strat_x(1) + 1;
+    dist = ceil(dist/1000);
+    angle = ceil((angle+pi)/C.angle_step);
+    
+    density = zeros(max(depth), max(dist), max(angle));
+    
+    
+    is_bad = (depth > C.strat_x(end) - C.strat_x(1) + 1) | depth <= 0;
+    
+    depth(is_bad) = [];
+    dist(is_bad) =  [];
+    angle(is_bad) = [];
+    
+    num_points = length(depth);
+    
+    for k = 1:num_points
+        density(depth(k), dist(k), angle(k)) = density(depth(k), dist(k), angle(k))+1;
+    end
+        
+    save(out_fn, 'density');
+end
+
+function density = get_density_grid(cell_num, varargin)
+    %compute density of cell by depth, angle, and distance.
+    %If use_soma == true, uses the soma as the reference center. Otherwise
+    %uses arbor mean
+    
+    p = inputParser;    
+    p.addRequired('cell_num', @isnumeric);
+    p.addOptional('force_recalc', false, @islogical);
+    
+    p.parse(cell_num, varargin{:});    
+    s = p.Results;
+    
+   
+    C = get_constants;
+    
+    out_fn = [C.strat_dir '/cell_' num2str(s.cell_num) '_' num2str(C.cell_dsmp_fact(1)) '_dsmp.mat'];
+    
+    if exist(out_fn,'file') && ~s.force_recalc
+        load(out_fn)
+        return
+    end
+    
+        
+    
+    fn = [C.point_dir '/cell_' num2str(s.cell_num) '_surface.mat'];
+    load(fn);
+    
+    
+    depth = C.f(surface_points(:,1));
+    depth = round(depth) - C.strat_x(1) + 1;
+    
+    
+    x = ceil(surface_points(:,2)/C.cell_dsmp_fact(1));
+    y = ceil(surface_points(:,3)/C.cell_dsmp_fact(2));
+
+    is_bad = (depth > C.strat_x(end) - C.strat_x(1) + 1) | depth <= 0 | x<=0 | y<=0;
+    depth = ceil(depth(~is_bad)/C.cell_dsmp_fact(3));
+    x = x(~is_bad);
+    y = y(~is_bad);
+    
+    max_depth = ceil(length(C.strat_x)/C.cell_dsmp_fact(3));
+    
+    x = x*max_depth + depth;
+    
+    if isempty(x)
+        density = [];
+    else
+        density = sparse(x,y,ones(length(x),1),max(x),max(y));
+    end
+        
+    save(out_fn, 'density');
+end
+    
+
+function distal_point = get_distal_loc(cell_id, varargin)
+
+    p = inputParser;    
+    p.addRequired('cell_id', @isnumeric);
+    p.addOptional('use_soma', check_to_use_soma(cell_id), @islogical);
+    
+    p.parse(cell_id, varargin{:});    
+    s = p.Results;
+
+    C = get_constants;
+
+    dist_fn = [C.soma_dir '/cell_' num2str(s.cell_id) '_dist.mat'];
+    if exist(dist_fn, 'file')
+        load(dist_fn)
+    else
+    
+    
+    
+    
+        mean_point = get_mean_point(s.cell_id, s.use_soma);
+        
+        disp(['distal point for ' num2str(s.cell_id) ' not found, calculating...']);
+    
+        fn = [C.point_dir '/cell_' num2str(s.cell_id) '_surface.mat'];
+        load(fn);
+
+        num_points = size(surface_points,1);
+        dist = sqrt(sum((surface_points(:,2:3) - ones(num_points,1)*mean_point(2:3)).^2,2));
+        
+        [max_dist, max_ind] = max(dist);
+        distal_point = surface_points(max_ind,:);
+        
+        save(dist_fn, 'distal_point');
+        
+        
+    end
+        
+    
+end
+
+
+function mean_point = get_mean_loc(cell_id)
+
+
+
+    C = get_constants;
+
+    mean_fn = [C.soma_dir '/cell_' num2str(cell_id) '_mean.mat'];
+    
+    if exist(mean_fn, 'file')
+        load(mean_fn)
+    else
+        disp(['mean point for ' num2str(cell_id) ' not found, calculating...']);
+    
+        fn = [C.point_dir '/cell_' num2str(cell_id) '_surface.mat'];
+        load(fn);
+
+        mean_point = mean(surface_points,1);
+        save(mean_fn, 'mean_point');
+        
+    end
+        
+    
+end
+
+function [SA, vol] = get_size_stats(cell_nums)
+
+    C = get_constants;
+
+    vol_dir = C.raw_point_dir;
+    
+    sa_dir = C.point_dir;
+
+    num_cells = length(cell_nums);
+    SA = zeros(num_cells,1);
+    vol = zeros(num_cells,1);
+    
+    for n = 1:num_cells
+
+        fn =[sa_dir '/cell_' num2str(cell_nums(n)) '_surface.mat'];
+        if exist(fn,'file')
+            point_info = whos('-file', fn);
+            SA(n) = point_info.size(1);
+
+            fns = get_files_with_names_including(vol_dir, num2str(cell_nums(n)));
+
+            for k = 1:length(fns)
+                point_info = whos('-file', [vol_dir fns{k}]);
+                vol(n) = vol(n)+point_info.size(1);
+            end
+
+
+
+        end
+    
+    end
+end
+
+    
+function soma_point = get_soma_loc(cell_id)
+
+
+
+    C = get_constants;
+
+    soma_fn = [C.soma_dir '/cell_' num2str(cell_id) '_soma.mat'];
+    
+    if exist(soma_fn, 'file')
+        load(soma_fn)
+    else
+        disp(['soma point for ' num2str(cell_id) ' not found, calculating...']);
+    
+        fn = [C.point_dir '/cell_' num2str(cell_id) '_surface.mat'];
+        load(fn);
+
+
+        C = get_constants;
+        depth = C.f(surface_points(:,1));
+
+        %is the cell body near 0 or 100?
+
+
+        d_hist = hist(depth, C.strat_x);
+        d_hist = d_hist/sum(d_hist);
+
+        [max_val strat_loc] = max(d_hist);
+
+        poss_trunk_locs = d_hist < .01 & d_hist > 0;
+        min_counts = sum(poss_trunk_locs(1:strat_loc));
+        max_counts = sum(poss_trunk_locs(strat_loc:end));
+
+        if min_counts > max_counts
+            min_depth = min(depth);
+            soma_points = surface_points(depth < (min_depth + C.soma_loc_threshold),:);
+        else
+            max_depth = max(depth);
+            soma_points = surface_points(depth > (max_depth - C.soma_loc_threshold),:);
+        end
+        soma_point = mean(soma_points,1);
+        save(soma_fn, 'soma_point');
+        
+    end
+        
+    
+end
